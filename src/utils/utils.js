@@ -24,20 +24,19 @@ const generateVisaPayload = (id, allowed) => {
 
     const parsed = JSON.parse(JSON.stringify(allowed))[0].assertions
 
-    // A. Build a JWT payload.
-    const payload = JSON.stringify({
+    let payload = parsed.map(item => JSON.stringify({
         iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
         sub: id,
-        ga4gh_visa_v1: [ {
-            type : parsed[0].type,
-            value: parsed[0].value,
-            source: parsed[0].source,
-            by: parsed[0].by,
-            asserted: parsed[0].asserted
-        } ],
+        ga4gh_visa_v1: {
+            type : item.type,
+            value: item.value,
+            source: item.source,
+            by: item.by,
+            asserted: item.asserted
+        },
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor((Date.now() + 3600000) / 1000)
-    })
+    }))
 
     return payload
 }
@@ -53,11 +52,12 @@ const signVisa = async (payload) => {
                                                          alg: key.alg,
                                                          jku: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/jwks',
                                                          kid: key.kid } }
-    // C. Generate a signed JWT (visas)
-    const token = await jose.JWS.createSign(options, key)
-        .update(payload)
-        .final()
+    
 
+    // C. Generate signed JWT (visas)
+    let token = await Promise.all(payload.map(async (item) =>   jose.JWS.createSign(options, key)
+                                                                        .update(item)
+                                                                        .final() ))
     return token
 }
 
