@@ -26,13 +26,13 @@ const generateVisaPayload = (id, allowed) => {
 
     // A. Build a JWT payload.
     const payload = JSON.stringify({
-        iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/jwks',
+        iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
         sub: id,
         ga4gh_visa_v1: [ {
             type : parsed[0].type,
             value: parsed[0].value,
             source: parsed[0].source,
-            by: parsed[0].dac,
+            by: parsed[0].by,
             asserted: parsed[0].asserted
         } ],
         iat: Math.floor(Date.now() / 1000),
@@ -48,9 +48,13 @@ const signVisa = async (payload) => {
     // A. Read keystore file (RSA, RS256).
     const keys = fs.readFileSync(__dirname + '/../keys.json')
     const keyStore = await jose.JWK.asKeyStore(keys.toString())
+    // B. Filter keys by use == 'sig'
     const [key] = keyStore.all({ use: 'sig' })
-    const options = { compact: true, jwk: key, fields: { typ: 'jwt' } }
-    // B. Generate a signed JWT (visas)
+    const options = { compact: true, jwk: key, fields: { typ: 'jwt', 
+                                                         alg: key.alg,
+                                                         jku: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/jwks',
+                                                         kid: key.kid } }
+    // C. Generate a signed JWT (visas)
     const token = await jose.JWS.createSign(options, key)
         .update(payload)
         .final()
