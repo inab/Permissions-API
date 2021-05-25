@@ -37,7 +37,7 @@ initDb( db => {
 
 	app.use("/permissions-api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDefinition, { explorer: true }));
 
-	app.use('/user', userRoutes({ config, db, keycloak }));
+	app.use('/me', userRoutes({ config, db, keycloak }));
 
 	app.use('/admin', adminRoutes({ config, db, keycloak }));
 
