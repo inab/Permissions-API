@@ -46,8 +46,7 @@ const generateVisaPayload = (id, allowed) => {
 
 const signVisa = async (payload) => {
     // A. Read keystore file (RSA, RS256).
-    const keys = fs.readFileSync(__dirname + '/../keys.json')
-    const keyStore = await jose.JWK.asKeyStore(keys.toString())
+    const keyStore = await getKeyStore()
     // B. Filter keys by use == 'sig'
     const [key] = keyStore.all({ use: 'sig' })
     const options = { compact: true, jwk: key, fields: { typ: 'jwt', 
