@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import initDb from './db';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
+import keysRoutes from './routes/keys';
 import config from './configHttp';
 import { keycloak, sessionData } from './config';
 import swaggerUi from 'swagger-ui-express';
@@ -40,6 +41,8 @@ initDb( db => {
 	app.use('/me', userRoutes({ config, db, keycloak }));
 
 	app.use('/admin', adminRoutes({ config, db, keycloak }));
+
+	app.use('/jwks', keysRoutes());
 
 	app.server.listen(process.env.PORT || config.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);

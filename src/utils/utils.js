@@ -62,6 +62,13 @@ const signVisa = async (payload) => {
     return token
 }
 
+const getKeyStore = async () => {
+    const ks = fs.readFileSync(__dirname + '/../keys.json')
+    const keyStore = await jose.JWK.asKeyStore(ks.toString())
+    return keyStore
+}
+
 exports.getFilePermissions = getFilePermissions;
 exports.generateVisaPayload = generateVisaPayload;
 exports.signVisa = signVisa;
+exports.getKeyStore = getKeyStore;
