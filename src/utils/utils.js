@@ -20,10 +20,12 @@ const getFilePermissions = async (id, status) => {
 
 // 2.a. GENERATE VISA PAYLOAD. 
 
-const generateVisaPayload = (id, allowed) => {
-
+const generateVisaPayload = (id, allowed, format) => {
+    // JWT (DEFAULT)
+    if(format !== 'PLAIN') format = 'JWT' 
+    // Parse DB response
     const parsed = JSON.parse(JSON.stringify(allowed))[0].assertions
-
+    // Build the payload
     let payload = parsed.map(item => JSON.stringify({
         iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
         sub: id,
@@ -35,7 +37,8 @@ const generateVisaPayload = (id, allowed) => {
             asserted: item.asserted
         },
         iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor((Date.now() + 3600000) / 1000)
+        exp: Math.floor((Date.now() + 3600000) / 1000),
+        format: format
     }))
 
     return payload
