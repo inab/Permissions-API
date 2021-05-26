@@ -21,8 +21,6 @@ const getFilePermissions = async (id, status) => {
 // 2.a. GENERATE VISA PAYLOAD. 
 
 const generateVisaPayload = (id, allowed, format) => {
-    // JWT (DEFAULT)
-    if(format !== 'PLAIN') format = 'JWT' 
     // Parse DB response
     const parsed = JSON.parse(JSON.stringify(allowed))[0].assertions
     // Build the payload
