@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import initDb from './db';
+import winston from 'winston';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
 import keysRoutes from './routes/keys';
@@ -11,6 +12,8 @@ import config from './configHttp';
 import { keycloak, sessionData } from './config';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import 'express-async-errors';
+import errors from './middleware/errors';
 
 let app = express();
 
@@ -43,6 +46,8 @@ initDb( db => {
 	app.use('/admin', adminRoutes({ config, db, keycloak }));
 
 	app.use('/jwks', keysRoutes());
+
+	app.use(errors)
 
 	app.server.listen(process.env.PORT || config.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);
