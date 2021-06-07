@@ -14,6 +14,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'express-async-errors';
 import errors from './middleware/errors';
+require('./logs')();
 
 let app = express();
 
