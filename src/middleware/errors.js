@@ -4,7 +4,7 @@ module.exports = function(err, req, res, next){
   winston.error(err.message, err);
 
   // Dynamic setting of the HTTP status code.
-  res.status(error.status)
+  res.status(err.status)
   // And, then, send the response.
-  res.json({ message: error.message })
+  res.json({ message: err.message })
 }
