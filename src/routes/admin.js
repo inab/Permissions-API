@@ -10,12 +10,13 @@ export default ({ config, db, keycloak }) => {
 
 	api.get('/', keycloak.protect(), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
-		let queryObject = {
-			headerId : req.header('x-account-id'),
-			paramsId : req.param('account-id')
-		}
+
 		// Validate with Joi.
-		const { error } = validateQuery(queryObject)
+		const { error } = validateQuery({ 	
+			headerId : req.header('x-account-id'),
+			paramsId : req.param('account-id'),
+			paramsFormat : req.param('format')
+		})
 
 		// No account ID present on Header || Parameters.
 		if(error) throw createError(400, "Bad request")
