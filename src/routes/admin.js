@@ -8,7 +8,7 @@ import createError from 'http-errors';
 export default ({ config, db, keycloak }) => {
 	let api = Router();
 
-	api.get('/', keycloak.protect(), async function(req, res){
+	api.get('/', keycloak.protect('admin'), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
 
 		// Validate with Joi.
