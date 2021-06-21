@@ -1,8 +1,7 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import { getFilePermissions, generateVisaPayload, signVisa } from '../utils/utils';
-import { validateQuery } from '../models/adminReadValidate';
-import { validateBody } from '../models/adminCreateValidate';
+import { getFilePermissions, createFilePermissions, generateVisaPayload, signVisa } from '../utils/utils';
+import { validateBody, validateQuery } from '../models/user';
 import getUsers from '../utils/getUsers';
 import createError from 'http-errors';
 
@@ -75,12 +74,17 @@ export default ({ config, db, keycloak }) => {
 		} else {
 			// Validate the assertions array (PLAIN: req.body)
 			const { error } = validateBody(req.body)
-			if(error) throw createError(400, "Bad request")
-		}
-	
-		// Add Mongoose model, validate, and upsert to MongoDB.
 
-		res.send("response");	
+			if(error) throw createError(400, "Bad request")
+			
+		}
+
+		const response = await Promise.all(
+			req.body.map(async (item) => await createFilePermissions(isValidUser.id, item))
+		)
+
+		res.status(207);
+		res.send(response);	
 	})
 
 	return api;

@@ -1,5 +1,5 @@
 // IMPORT MONGOOSE MODELS.
-import { UserFilesObject } from '../models/getFilesByUserId';
+import { UserPermissions } from '../models/user';
 import jose from 'node-jose';
 import fs from 'fs';
 
@@ -9,10 +9,32 @@ import fs from 'fs';
 
 // 1.a. GET FILE PERMISSIONS BY USER ID
 
-const getFilePermissions = async (id, status) => {
-    const response = await UserFilesObject
-                    .find({ 'sub' : id })
-                    .select({ 'assertions' : 1, '_id' : 0});
+const getFilePermissions = async (id) => {
+    const response = await UserPermissions.find({ 'sub' : id })
+                                          .select({ 'assertions' : 1, '_id' : 0});
+
+    return response
+}
+
+// 1.b. CREATE/UPDATE (UPSERT) FILE PERMISSIONS BY USER ID AND VALUE.
+
+const createFilePermissions = async (id, obj) => {
+
+    const user = await UserPermissions.updateOne(  { 'sub' : id },
+                                { $setOnInsert: { "assertions" : obj } },
+                                { new: true, upsert: true })                                       
+    
+    let response = await UserPermissions.findOneAndUpdate(
+                                    { 'sub' : id, 'assertions.value' : obj.value },
+                                    { $set : { "assertions.$" : obj } },
+                                    { new: true });  
+    if(!response) {
+        response = await UserPermissions.findOneAndUpdate(
+                    { 'sub' : id },
+                    { $addToSet : { "assertions" : obj } },
+                    { new: true });
+    }
+
     return response
 }
 
@@ -69,6 +91,7 @@ const getKeyStore = async () => {
 }
 
 exports.getFilePermissions = getFilePermissions;
+exports.createFilePermissions = createFilePermissions;
 exports.generateVisaPayload = generateVisaPayload;
 exports.signVisa = signVisa;
 exports.getKeyStore = getKeyStore;

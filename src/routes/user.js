@@ -8,6 +8,7 @@ export default ({ config, db, keycloak }) => {
 
 	api.get('/permissions', keycloak.protect(), async function(req, res){
 		const userInfo = jwt_decode(req.headers.authorization)
+		console.log(userInfo);
 		const allowedAccess = await getFilePermissions(userInfo.sub)	
 		// FORMAT: PLAIN  
 		if(req.query.format === 'PLAIN') return res.send(generateVisaPayload(userInfo.sub, allowedAccess, 'PLAIN'))
