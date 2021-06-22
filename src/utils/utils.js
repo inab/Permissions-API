@@ -38,6 +38,18 @@ const createFilePermissions = async (id, obj) => {
     return response
 }
 
+// 1.c. REMOVE FILE PERMISSIONS BY USER ID AND VALUE.
+
+const removeFilePermissions = async (userId, fileId) => {
+
+    let response = await UserPermissions.findOneAndUpdate(
+                                    { 'sub' : userId, 'assertions.value' : fileId },
+                                    { $pull : { 'assertions' : { 'value': fileId } } },
+                                    { new: true }); 
+
+    return response
+}
+
 /* 2. GENERATE VISA: */
 
 // 2.a. GENERATE VISA PAYLOAD. 
@@ -92,6 +104,7 @@ const getKeyStore = async () => {
 
 exports.getFilePermissions = getFilePermissions;
 exports.createFilePermissions = createFilePermissions;
+exports.removeFilePermissions = removeFilePermissions;
 exports.generateVisaPayload = generateVisaPayload;
 exports.signVisa = signVisa;
 exports.getKeyStore = getKeyStore;
