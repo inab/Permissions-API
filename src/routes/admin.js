@@ -4,6 +4,7 @@ import { getFilePermissions, createFilePermissions, removeFilePermissions, gener
 import { validateBody, validateQuery, validateQueryAndFileIds } from '../models/user';
 import getUsers from '../utils/getUsers';
 import createError from 'http-errors';
+import jwt_decode from 'jwt-decode';
 
 export default ({ config, db, keycloak }) => {
 	let api = Router();
@@ -31,9 +32,7 @@ export default ({ config, db, keycloak }) => {
 		const isValidUser = usersList.find(user => user.id == userId);
 
 		// The current user does not exists on Keycloak.
-		if(!isValidUser){
-			throw createError(404, "User account invalid")
-		}
+		if(!isValidUser) throw createError(404, "User account invalid")
 
 		// Response: Get Visa array (JWT, PLAIN).
 		const allowedAccess = await getFilePermissions(isValidUser.id)	 
@@ -45,7 +44,7 @@ export default ({ config, db, keycloak }) => {
 		// Check both x-account-id & account-id. At least one of them must exist.
 
 		// Validate with Joi.
-		const { error } = validateQuery({ 	
+		let { error } = validateQuery({ 	
 			headerId : req.header('x-account-id'),
 			paramsId : req.param('account-id'),
 			paramsFormat : req.param('format')
@@ -64,24 +63,29 @@ export default ({ config, db, keycloak }) => {
 		const isValidUser = usersList.find(user => user.id == userId);
 
 		// The current user does not exists on Keycloak.
-		if(!isValidUser){
-			throw createError(404, "User account invalid")
+		if(!isValidUser) throw createError(404, "User account invalid")
+
+		let assertions = req.body;
+
+		// FORMAT JWT: Decode tokens and build an assertions array. 
+		if(req.query.format !== 'PLAIN') {
+			assertions = req.body.map(item => {
+				const { type, asserted, value, source, by } = jwt_decode(item.jwt)
+				const subset = { type, asserted, value, source, by }
+				return subset
+			})
 		}
 
-		if(!req.query.format === 'PLAIN') {
-			// Decode tokens and build an assertions array. Then validate assertions.
-		} else {
-			// Validate the assertions array (PLAIN: req.body)
-			const { error } = validateBody(req.body)
-			if(error) throw createError(400, "Bad request")
-		}
+		// Validate the assertions array.
+		({ error } = validateBody(assertions))
+		if(error) throw createError(400, "Bad request")
 
 		const response = await Promise.all(
-			req.body.map(async (item) => await createFilePermissions(isValidUser.id, item))
+			assertions.map(async (item) => await createFilePermissions(isValidUser.id, item))
 		)
 
 		res.status(207);
-		res.send(response);	
+		res.send('response');	
 	})
 
 	api.delete('/', keycloak.protect('admin'), async function(req, res){
@@ -107,9 +111,7 @@ export default ({ config, db, keycloak }) => {
 		const isValidUser = usersList.find(user => user.id == userId);
 
 		// The current user does not exists on Keycloak.
-		if(!isValidUser){
-			throw createError(404, "User account invalid")
-		}
+		if(!isValidUser) throw createError(404, "User account invalid")
 
 		const response = await Promise.all(
 			req.param('values').split(',').map(async (item) => await removeFilePermissions(isValidUser.id, item))

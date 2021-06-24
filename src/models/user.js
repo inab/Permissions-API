@@ -31,8 +31,7 @@ function validateBody(bodyObject){
             asserted: Joi.number().required(),
             value: Joi.string().regex(/^[-:.\/_+\w]+$/).required(),
             source: Joi.string().regex(/^[-:.\/_+\w]+$/).required(),
-            by: Joi.string().valid('dac').required(),
-            format: Joi.string().min(0).allow(null).default(null)
+            by: Joi.string().valid('dac').required()
         })
     );
     
