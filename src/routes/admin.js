@@ -85,7 +85,7 @@ export default ({ config, db, keycloak }) => {
 		)
 
 		res.status(207);
-		res.send('response');	
+		res.send(response);	
 	})
 
 	api.delete('/', keycloak.protect('admin'), async function(req, res){
