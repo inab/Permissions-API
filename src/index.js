@@ -8,8 +8,7 @@ import winston from 'winston';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
 import keysRoutes from './routes/keys';
-import config from './configHttp';
-import { keycloak, sessionData } from './config';
+import { keycloak, sessionData, serverConf } from './config';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'express-async-errors';
@@ -23,11 +22,11 @@ app.server = http.createServer(app);
 app.use(morgan('dev'));
 
 app.use(cors({
-	exposedHeaders: config.corsHeaders
+	exposedHeaders: serverConf.corsHeaders
 }));
 
 app.use(bodyParser.json({
-	limit : config.bodyLimit
+	limit : serverConf.bodyLimit
 }));
 
 app.use(sessionData);
@@ -42,15 +41,15 @@ initDb( db => {
 
 	app.use("/permissions-api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDefinition, { explorer: true }));
 
-	app.use('/me', userRoutes({ config, db, keycloak }));
+	app.use('/me', userRoutes({ serverConf, db, keycloak }));
 
-	app.use('/admin', adminRoutes({ config, db, keycloak }));
+	app.use('/permissions', adminRoutes({ serverConf, db, keycloak }));
 
 	app.use('/jwks', keysRoutes());
 
 	app.use(errors)
 
-	app.server.listen(process.env.PORT || config.port, () => {
+	app.server.listen(process.env.PORT || serverConf.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);
 	});
 
