@@ -7,7 +7,7 @@
     "dev": "nodemon -w src --exec \"babel-node src/index.js\"",
     "build": "babel src/ --out-dir dist",
     "serve": "node dist/index.js",
-    "test": "jest --watchAll --verbose"
+    "test": "NODE_ENV=test jest --watchAll --verbose"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -60,6 +60,9 @@
     "@babel/preset-env": "^7.14.7",
     "eslint": "^3.1.1",
     "jest": "^27.0.5",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.5",
+    "keycloak-request-token": "^0.1.0",
     "nodemon": "^1.9.2",
     "supertest": "^6.1.3"
   },
