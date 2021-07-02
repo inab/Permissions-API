@@ -91,7 +91,6 @@ export default ({ config, db, keycloak }) => {
 	api.delete('/', keycloak.protect('admin'), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
 
-		// Validate with Joi.
 		const { error } = validateQueryAndFileIds({ 	
 			headerId : req.header('x-account-id'),
 			paramsId : req.param('account-id'),
@@ -113,13 +112,17 @@ export default ({ config, db, keycloak }) => {
 		// The current user does not exists on Keycloak.
 		if(!isValidUser) throw createError(404, "User account invalid")
 
-		const response = await Promise.all(
+		let response = await Promise.all(
 			req.param('values').split(',').map(async (item) => await removeFilePermissions(isValidUser.id, item))
 		)
 
-		res.status(207);
-		res.send(response);	
-	
+		if(!response[0] && response.length === 1) throw createError(204, "No record has been deleted")
+
+		const nonEmpty = response.filter(el => el !== null);
+		const lastItem = nonEmpty.pop();
+
+		res.status(200);
+		res.send(lastItem);	
 	})
 
 	return api;
