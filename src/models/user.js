@@ -29,8 +29,8 @@ function validateBody(bodyObject){
         Joi.object().keys({
             type: Joi.string().valid('ControlledAccessGrants').required(),
             asserted: Joi.number().required(),
-            value: Joi.string().regex(/^[-:.\/_+\w]+$/).required(),
-            source: Joi.string().regex(/^[-:.\/_+\w]+$/).required(),
+            value: Joi.string().uri({ scheme: ['https']}).required(),
+            source: Joi.string().uri({ scheme: ['https']}).required(),
             by: Joi.string().valid('dac').required()
         })
     );
@@ -39,6 +39,7 @@ function validateBody(bodyObject){
 }
 
 // Extending Joi in order to deal with query params as comma separated values.
+
 const JoiExtended = Joi.extend(joi => ({
     base: joi.array(),
     coerce: (value, helpers) => ({
@@ -52,7 +53,7 @@ function validateQueryAndFileIds(queryObject){
         headerId: Joi.string().min(0).allow(null).default(null),
         paramsId: Joi.string().when('headerId', { is: null, then: Joi.required() }),
         paramsFileIds:  Joi.alternatives().try(
-                            JoiExtended.delimitedArray().items(Joi.string().regex(/^[-:.\/_+\w]+$/)),
+                            JoiExtended.delimitedArray().items(Joi.string().uri({ scheme: ['https']}).required()),
                             Joi.string().valid('all')
         ).required()
     })
