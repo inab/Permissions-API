@@ -1,0 +1,32 @@
+version: "3"
+services:
+  portal:
+    image: acavalls/ipc-permissions-api:latest
+    container_name: permissions-api-prod
+    ports:
+      - 8082:8081
+    env_file:
+      - ./.env
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - mongo
+      - watchtower
+    restart: always
+  mongo:
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    ports:
+      - 27018:27017
+    restart: always
+  watchtower:
+    command: --label-enable --cleanup --interval 300
+    image: containrrr/watchtower
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    network_mode: none
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
