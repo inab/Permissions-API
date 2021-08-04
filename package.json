@@ -4,7 +4,7 @@
   "description": "Permissions ES6 RESTful Express API",
   "main": "dist",
   "scripts": {
-    "dev": "NODE_ENV=dev nodemon -w src --exec \"babel-node src/index.js\"",
+    "dev": "NODE_ENV=dev nodemon --ignore keys.json -w src --exec \"babel-node src/index.js\"",
     "build": "babel src/ --out-dir dist",
     "serve": "node dist/index.js",
     "test": "NODE_ENV=test jest --verbose --runInBand --forceExit"

@@ -13,7 +13,10 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'express-async-errors';
 import errors from './middleware/errors';
+require('dotenv').config();
 require('./logs')();
+
+if(process.env.NODE_ENV == 'test' || process.env.NODE_ENV == 'dev') require('./keys.js')();
 
 let app = express();
 
@@ -52,7 +55,8 @@ initDb( db => {
 	app.server.listen(process.env.PORT || serverConf.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);
 	});
-
 });
 
 export default app;
+
+
