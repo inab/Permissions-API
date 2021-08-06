@@ -20,6 +20,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
     ports:
       - 27018:27017
+    volumes:
+      - /data/mongodb:/data/db
     restart: always
   watchtower:
     command: --label-enable --cleanup --interval 300

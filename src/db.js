@@ -3,14 +3,7 @@ import winston from 'winston';
 require('dotenv').config();
 
 export default callback => {
-	let host = "";
-	
-	if(process.env.NODE_ENV == "test" || process.env.NODE_ENV == "dev") {
-	  host = process.env.MONGO_HOST_TEST
-	} else {
-	  host = process.env.MONGO_HOST;
-	}
-
+	let host = process.env.NODE_ENV === 'test' ? process.env.MONGO_HOST_TEST : process.env.MONGO_HOST;	
 	let db = process.env.MONGO_DB;
 	let username = process.env.MONGO_USER;
 	let password = process.env.MONGO_PASS;
