@@ -8,12 +8,13 @@ export default ({ config, db, keycloak }) => {
 
 	api.get('/permissions', keycloak.protect(), async function(req, res){
 		const userInfo = jwt_decode(req.headers.authorization)
-		console.log(userInfo);
-		const allowedAccess = await getFilePermissions(userInfo.sub)	
+		const allowedAccess = await getFilePermissions(userInfo.sub)
 		// FORMAT: PLAIN  
-		if(req.query.format === 'PLAIN') return res.send(generateVisaPayload(userInfo.sub, allowedAccess, 'PLAIN'))
+		if(req.query.format === 'PLAIN' && allowedAccess.length > 0) return res.send(generateVisaPayload(userInfo.sub, allowedAccess, 'PLAIN'))
 		// JTW (DEFAULT)
-		res.send(await signVisa(generateVisaPayload(userInfo.sub, allowedAccess, 'JWT')));		
+		else if(allowedAccess.length > 0) return res.send(await signVisa(generateVisaPayload(userInfo.sub, allowedAccess, 'JWT')));		
+
+		res.send(allowedAccess)
 	})
 
 	return api;
