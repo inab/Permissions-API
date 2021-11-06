@@ -7,6 +7,7 @@ import initDb from './db';
 import winston from 'winston';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
+import requestRoutes from './routes/request';
 import keysRoutes from './routes/keys';
 import { keycloak, sessionData, serverConf } from './config';
 import swaggerUi from 'swagger-ui-express';
@@ -47,6 +48,8 @@ initDb( db => {
 	app.use('/me', userRoutes({ serverConf, db, keycloak }));
 
 	app.use('/permissions', adminRoutes({ serverConf, db, keycloak }));
+
+	app.use('/request', requestRoutes({ serverConf, db, keycloak }));
 
 	app.use('/jwks', keysRoutes());
 

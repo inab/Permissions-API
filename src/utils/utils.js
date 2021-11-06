@@ -1,5 +1,6 @@
 // IMPORT MONGOOSE MODELS.
 import { UserPermissions } from '../models/user';
+import { UserRequests } from '../models/request';
 import jose from 'node-jose';
 import fs from 'fs';
 
@@ -102,9 +103,19 @@ const getKeyStore = async () => {
     return keyStore
 }
 
+// 3. GET USER REQUESTS.
+
+const getRequest = async (id) => {
+    const response = await UserRequests.find({ 'sub' : id })
+                                       .select({ 'comments' : 1, '_id' : 0});
+
+    return response
+}
+
 exports.getFilePermissions = getFilePermissions;
 exports.createFilePermissions = createFilePermissions;
 exports.removeFilePermissions = removeFilePermissions;
 exports.generateVisaPayload = generateVisaPayload;
 exports.signVisa = signVisa;
 exports.getKeyStore = getKeyStore;
+exports.getRequest = getRequest;
