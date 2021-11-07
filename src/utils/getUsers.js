@@ -1,7 +1,7 @@
 import KcAdminClient from 'keycloak-admin';
 import { keycloakAdminCredentials } from '../config'
 
-export default async () => {
+export default async (userId) => {
     const kcAdminClient = new KcAdminClient({
         baseUrl: 'https://inb.bsc.es/auth',
         realmName: 'master'
@@ -15,5 +15,5 @@ export default async () => {
         realmName: 'IPC',
     });
 
-    return await kcAdminClient.users.find();
+    return await await kcAdminClient.users.findOne({ id: userId })
 }

@@ -25,11 +25,8 @@ export default ({ config, db, keycloak }) => {
 		// Select userId for checking if exists on Keycloak.
 		let userId = req.header('x-account-id') ? req.header('x-account-id') : req.param('account-id')
 
-		// Getting the user list from Keycloak for the iPC realm.
-		const usersList = await getUsers()
-
-		// Filter user list by ID.
-		const isValidUser = usersList.find(user => user.id == userId);
+		// Does this user exist in the Keycloak realm?
+		const isValidUser = await getUsers(userId)
 
 		// The current user does not exists on Keycloak.
 		if(!isValidUser) throw createError(404, "User account invalid")
@@ -55,12 +52,9 @@ export default ({ config, db, keycloak }) => {
 
 		// Select userId for checking if exists on Keycloak.
 		let userId = req.header('x-account-id') ? req.header('x-account-id') : req.param('account-id')
-
-		// Getting the user list from Keycloak for the iPC realm.
-		const usersList = await getUsers()
-
-		// Filter user list by ID.
-		const isValidUser = usersList.find(user => user.id == userId);
+		
+		// Does this user exist in the Keycloak realm?
+		const isValidUser = await getUsers(userId)
 
 		// The current user does not exists on Keycloak.
 		if(!isValidUser) throw createError(404, "User account invalid")
@@ -103,11 +97,8 @@ export default ({ config, db, keycloak }) => {
 		// Select userId for checking if exists on Keycloak.
 		let userId = req.header('x-account-id') ? req.header('x-account-id') : req.param('account-id')
 
-		// Getting the user list from Keycloak for the iPC realm.
-		const usersList = await getUsers()
-
-		// Filter user list by ID.
-		const isValidUser = usersList.find(user => user.id == userId);
+		// Does this user exist in the Keycloak realm?
+		const isValidUser = await getUsers(userId)
 
 		// The current user does not exists on Keycloak.
 		if(!isValidUser) throw createError(404, "User account invalid")
