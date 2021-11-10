@@ -9,7 +9,7 @@ import jwt_decode from 'jwt-decode';
 export default ({ config, db, keycloak }) => {
 	let api = Router();
 
-	api.get('/', keycloak.protect('admin'), async function(req, res){
+	api.get('/', keycloak.protect('dac-admin'), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
 
 		// Validate with Joi.
@@ -37,7 +37,7 @@ export default ({ config, db, keycloak }) => {
 		res.send(await signVisa(generateVisaPayload(isValidUser.id, allowedAccess, 'JWT')));	
 	})
 
-	api.post('/', keycloak.protect('admin'), async function(req, res){
+	api.post('/', keycloak.protect('is-dac'), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
 
 		// Validate with Joi.
@@ -82,7 +82,7 @@ export default ({ config, db, keycloak }) => {
 		res.send(response);	
 	})
 
-	api.delete('/', keycloak.protect('admin'), async function(req, res){
+	api.delete('/', keycloak.protect('dac-admin'), async function(req, res){
 		// Check both x-account-id & account-id. At least one of them must exist.
 
 		const { error } = validateQueryAndFileIds({ 	

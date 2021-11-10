@@ -33,25 +33,34 @@ var keycloakAdminCredentials = {
     clientId: 'admin-cli'  
 }
 
-
-const baseUrl = 'https://inb.bsc.es/auth';
-
-// User: AdminRole
-const admSettings = {
+// User: dac-admin Role
+const dacAdmSettings = {
     client_id: 'ipc-react-portal',
-    username: process.env.PERMISSIONS_ADMIN_NAME,
-    password: process.env.PERMISSIONS_ADMIN_PASS,
+    username: process.env.DAC_ADMIN_NAME,
+    password: process.env.DAC_ADMIN_PASS,
     grant_type: 'password',
     realmName: 'IPC'
 };
-// User: UserRole
+
+// User: dac-member Role
+const dacMbrSettings = {
+    client_id: 'ipc-react-portal',
+    username: process.env.DAC_MEMBER_NAME,
+    password: process.env.DAC_MEMBER_PASS,
+    grant_type: 'password',
+    realmName: 'IPC'
+};
+
+// User: user Role
 const usrSettings = {
     client_id: 'ipc-react-portal',
-    username: process.env.PERMISSIONS_USER_NAME,
-    password: process.env.PERMISSIONS_USER_PASS,
+    username: process.env.REGULAR_USER_NAME,
+    password: process.env.REGULAR_USER_PASS,
     grant_type: 'password',
     realmName: 'IPC'
 };
+
+
 
 var serverConf = {
     "port": 8081,
@@ -63,7 +72,8 @@ module.exports = {
     keycloak,
     sessionData,
     keycloakAdminCredentials,
-    admSettings,
+    dacAdmSettings,
+    dacMbrSettings,
     usrSettings,
     serverConf
 };

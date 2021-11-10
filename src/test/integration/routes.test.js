@@ -2,7 +2,7 @@ import { UserPermissions } from '../../models/user';
 import app from '../../index';
 import request from 'supertest';
 import tokenRequester from 'keycloak-request-token';
-import { admSettings } from '../../config';
+import { dacAdmSettings } from '../../config';
 
 describe('Integration tests: Routes with Admin role', () => {
 
@@ -50,7 +50,7 @@ describe('Integration tests: Routes with Admin role', () => {
 
     beforeEach(async() => {
         baseUrl = 'https://inb.bsc.es/auth/';
-        admToken = await tokenRequester(baseUrl, admSettings);
+        admToken = await tokenRequester(baseUrl, dacAdmSettings);
     });
 
     afterEach(async () => { 

@@ -59,6 +59,10 @@ const generateVisaPayload = (id, allowed, format) => {
     // Parse DB response
     const parsed = JSON.parse(JSON.stringify(allowed))[0].assertions
     // Build the payload
+    
+    // Dmitry: JSON-Object visas response instead of strings...
+    // let payload = parsed.map(item => JSON.parse(JSON.stringify({
+    
     let payload = parsed.map(item => JSON.stringify({
         iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
         sub: id,
@@ -92,6 +96,7 @@ const signVisa = async (payload) => {
 
     // C. Generate signed JWT (visas)
     let token = await Promise.all(payload.map(async (item) =>   jose.JWS.createSign(options, key)
+                                                                        //.update(JSON.stringify(item))
                                                                         .update(item)
                                                                         .final() ))
     return token
