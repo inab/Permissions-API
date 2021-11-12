@@ -32,9 +32,12 @@ export default ({ config, db, keycloak }) => {
 		if(!isValidUser) throw createError(404, "User account invalid")
 
 		// Response: Get Visa array (JWT, PLAIN).
-		const allowedAccess = await getFilePermissions(isValidUser.id)	 
-		if(req.query.format === 'PLAIN') return res.send(generateVisaPayload(isValidUser.id, allowedAccess, 'PLAIN'));
-		res.send(await signVisa(generateVisaPayload(isValidUser.id, allowedAccess, 'JWT')));	
+		const allowedAccess = await getFilePermissions(isValidUser.id)
+		// FORMAT: PLAIN	 
+		if(req.query.format === 'PLAIN' && allowedAccess.length > 0) return res.send(generateVisaPayload(isValidUser.id, allowedAccess, 'PLAIN'));
+		// FORMAT: JWT
+		else if(allowedAccess.length > 0) res.send(await signVisa(generateVisaPayload(isValidUser.id, allowedAccess, 'JWT')));	
+		res.send(allowedAccess)
 	})
 
 	api.post('/', keycloak.protect('is-dac'), async function(req, res){
