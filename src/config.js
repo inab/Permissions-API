@@ -4,7 +4,7 @@ require('dotenv').config();
 
 var keycloakConfig = {
 	"realm": "IPC",
-	"auth-server-url": "https://inb.bsc.es/auth/",
+	"auth-server-url": process.env.KEYCLOAK_URL,
 	"ssl-required": "external",
     "resource": "permissions-api",
     "verify-token-audience": true,

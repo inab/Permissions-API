@@ -3,7 +3,7 @@ import { keycloakAdminCredentials } from '../config'
 
 export default async (userId) => {
     const kcAdminClient = new KcAdminClient({
-        baseUrl: 'https://inb.bsc.es/auth',
+        baseUrl: process.env.KEYCLOAK_URL,
         realmName: 'master'
     });
 
