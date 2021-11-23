@@ -8,7 +8,7 @@ describe('Integration tests: Routes with Admin role', () => {
 
     let baseUrl;
     let admToken;
-    let validAdminId = "693be0a5-c215-480f-8105-3b3a7b16178e";
+    let validAdminId = "fa111014-1635-4708-b262-e8f6913d4bdb";
     let invalidAdminId = "invalidTestId";
 
     let assertionsDoc = [
@@ -29,7 +29,7 @@ describe('Integration tests: Routes with Admin role', () => {
     ];
     
     let visaDoc = {
-        sub: "693be0a5-c215-480f-8105-3b3a7b16178e",
+        sub: "fa111014-1635-4708-b262-e8f6913d4bdb",
         assertions: [
             {
                 type : "ControlledAccessGrants",
@@ -49,7 +49,7 @@ describe('Integration tests: Routes with Admin role', () => {
     };
 
     beforeEach(async() => {
-        baseUrl = 'https://inb.bsc.es/auth/';
+        baseUrl = process.env.KEYCLOAK_URL;
         admToken = await tokenRequester(baseUrl, dacAdmSettings);
     });
 

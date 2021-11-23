@@ -18,19 +18,19 @@ describe('Integration tests: AuthN/Z', () => {
 
     const postRequest = async (token) => {
         return await request(app).post("/permissions")
-                                 .query({ "account-id": "693be0a5-c215-480f-8105-3b3a7b16178e", 'format' : 'PLAIN' })
+                                 .query({ "account-id": "42a55fa0-18e9-482b-8619-3d7caa757ac9", 'format' : 'PLAIN' })
                                  .auth(token, { type: 'bearer' })
                                  .send(doc)
     }
 
     const getRequest = async (token) => {
         return await request(app).get("/permissions")
-                                 .query({ "account-id": "693be0a5-c215-480f-8105-3b3a7b16178e", 'format' : 'PLAIN' })
+                                 .query({ "account-id": "42a55fa0-18e9-482b-8619-3d7caa757ac9", 'format' : 'PLAIN' })
                                  .auth(token, { type: 'bearer' })
     }
 
     beforeEach(async() => {
-        baseUrl = 'https://inb.bsc.es/auth/';
+        baseUrl = process.env.KEYCLOAK_URL;
         dacAdmToken = await tokenRequester(baseUrl, dacAdmSettings);
         dacMbrToken = await tokenRequester(baseUrl, dacMbrSettings);
         usrToken = await tokenRequester(baseUrl, usrSettings);
