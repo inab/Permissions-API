@@ -20,24 +20,46 @@ jobs:
   run-tests:
     machine:
       image: ubuntu-1604:202007-01
+    resource_class: medium
     steps:
       - checkout
       - run:
-          name: Build images
-          command: docker-compose -f docker-compose.tests.yml build
+          name: Pull test data and plugins submodules
+          command: |
+            git submodule init
+            git submodule update
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
       - run:
           name: Start KEYCLOAK
           command: |
-            docker-compose -f docker-compose.tests.yml --env-file .env-tests up -d keycloak
-            sleep 30
+            docker-compose -f docker-compose.tests.yml up -d keycloak
       - run:
           name: Start MONGO
           command: |
-            docker-compose -f docker-compose.tests.yml --env-file .env-tests up -d mongo
-            sleep 30
+            docker-compose -f docker-compose.tests.yml up -d mongo
+      - run:
+          name: Wait for mongodb
+          command: |
+            docker-compose -f docker-compose.tests.yml logs mongo
+            dockerize -wait tcp://172.21.0.1:27017 -timeout 5m
+      - run:
+          name: Wait for keycloak
+          command: |
+            docker-compose -f docker-compose.tests.yml logs keycloak
+            dockerize -wait tcp://172.21.0.1:8080 -timeout 5m
+      - run:
+          name: KC & MongoDB permissions
+          command: |
+            sudo usermod -a -G docker $USER
+            sudo chmod -R 777 ./
       - run:
           name: Run Tests with Jest
-          command: docker-compose -f docker-compose.tests.yml run permissions-api npm test
+          command: |
+            docker-compose -f docker-compose.tests.yml run permissions-api npm test
   publish:
     docker:
       - image: cimg/node:16.4.1
