@@ -38,8 +38,7 @@ services:
       - "./ipc-test-data/keycloak/realms:/opt/jboss/keycloak/imports"
       - "./ipc-plugins/keycloak:/opt/jboss/keycloak/standalone/deployments"
     command:
-      - '-b 0.0.0.0 -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFi
-le -Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json -Dkeycloak.migration.strategy=IGNORE_EXISTING'
+      - '-b 0.0.0.0 -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json -Dkeycloak.migration.strategy=IGNORE_EXISTING'
     ports:
       - 8080:8080
     depends_on:
@@ -52,6 +51,8 @@ le -Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json -Dkey
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    volumes:
+      - "./ipc-test-data/mdbdata:/data/db"
     ports:
       - 27017:27017
     depends_on:
