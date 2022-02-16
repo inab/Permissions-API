@@ -33,34 +33,50 @@ var keycloakAdminCredentials = {
     clientId: 'admin-cli'  
 }
 
-// User: dac-admin Role
+// User: dac-admin Role I
 const dacAdmSettings = {
-    client_id: 'ipc-react-portal',
+    client_id: 'dac-portal',
     username: process.env.DAC_ADMIN_NAME,
     password: process.env.DAC_ADMIN_PASS,
     grant_type: 'password',
     realmName: 'IPC'
 };
 
-// User: dac-member Role
+// User: dac-admin Role II
+const dacAdmSettings_II = {
+    client_id: 'dac-portal',
+    username: process.env.DAC_ADMIN_NAME_II,
+    password: process.env.DAC_ADMIN_PASS_II,
+    grant_type: 'password',
+    realmName: 'IPC'
+};
+
+// User: dac-member Role I
 const dacMbrSettings = {
-    client_id: 'ipc-react-portal',
+    client_id: 'dac-portal',
     username: process.env.DAC_MEMBER_NAME,
     password: process.env.DAC_MEMBER_PASS,
     grant_type: 'password',
     realmName: 'IPC'
 };
 
+// User: dac-member Role II
+const dacMbrSettings_II = {
+    client_id: 'dac-portal',
+    username: process.env.DAC_MEMBER_NAME_II,
+    password: process.env.DAC_MEMBER_PASS_II,
+    grant_type: 'password',
+    realmName: 'IPC'
+};
+
 // User: user Role
 const usrSettings = {
-    client_id: 'ipc-react-portal',
+    client_id: 'dac-portal',
     username: process.env.REGULAR_USER_NAME,
     password: process.env.REGULAR_USER_PASS,
     grant_type: 'password',
     realmName: 'IPC'
 };
-
-
 
 var serverConf = {
     "port": 8081,
@@ -73,7 +89,9 @@ module.exports = {
     sessionData,
     keycloakAdminCredentials,
     dacAdmSettings,
+    dacAdmSettings_II,
     dacMbrSettings,
+    dacMbrSettings_II,
     usrSettings,
     serverConf
 };

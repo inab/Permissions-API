@@ -1,0 +1,4 @@
+    DAC-ID                      USER                       RESOURCES (PREFIX: https://test-url/)
+IPC00000000001 | dac-admin-1, dac-member-1, dac-member-2 |         TF001, TF002, TF003
+IPC00000000002 | dac-admin-1, dac-admin-2, dac-member-1  |                TF004
+IPC00000000003 | dac-admin-3, dac-member-3               |                TF005

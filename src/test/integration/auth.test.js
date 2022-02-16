@@ -2,18 +2,19 @@ import { UserPermissions } from '../../models/user';
 import app from '../../index';
 import request from 'supertest';
 import tokenRequester from 'keycloak-request-token';
-import { usrSettings, dacAdmSettings, dacMbrSettings } from '../../config';
+import { usrSettings, dacAdmSettings, dacAdmSettings_II, dacMbrSettings } from '../../config';
 
 describe('Integration tests: AuthN/Z', () => {
 
     let dacAdmToken;
+    let dacAdmToken_II;
     let dacMbrToken;
     let usrToken;
     let baseUrl;
     let doc = [{ type : "ControlledAccessGrants",
                  asserted: 1564814387,
-                 value: "https://test-url/TF008",
-                 source: "https://test-url/source_dac_01",
+                 value: "https://test-url/TF003",
+                 source: "https://test-url/source_dac_03",
                  by: "dac" }];
 
     const postRequest = async (token) => {
@@ -29,9 +30,16 @@ describe('Integration tests: AuthN/Z', () => {
                                  .auth(token, { type: 'bearer' })
     }
 
+    const deleteRequest = async (token) => {
+        return await request(app).delete('/permissions')
+                                 .query({ 'account-id': "42a55fa0-18e9-482b-8619-3d7caa757ac9", 'format' : 'PLAIN', 'values' : 'https://test-url/TF003' })
+                                 .auth(token, { type: 'bearer' }) 
+    }        
+
     beforeEach(async() => {
         baseUrl = process.env.KEYCLOAK_URL;
         dacAdmToken = await tokenRequester(baseUrl, dacAdmSettings);
+        dacAdmToken_II = await tokenRequester(baseUrl, dacAdmSettings_II);
         dacMbrToken = await tokenRequester(baseUrl, dacMbrSettings);
         usrToken = await tokenRequester(baseUrl, usrSettings);
     });
@@ -51,23 +59,29 @@ describe('Integration tests: AuthN/Z', () => {
             // First we add a document in the DB with an authorized user (dac-admin).
             let response = await postRequest(dacAdmToken);
             expect(response.status).toBe(207);
-            // Then, we try to get that document with unauthorized users (user, dac-member).
+            // Then, we try to get that document with unauthorized users (user).
             response = await getRequest(usrToken);
             expect(response.status).toBe(403);
-            response = await getRequest(dacMbrToken);
-            expect(response.status).toBe(403);
         });
-        it('User Authenticated AND Authorized -> 200', async () => {
+        it('User Authenticated AND NOT Authorized - DAC-ADMIN (RBAC) not controlling this resource (ABAC) -> 403 error', async () => {
             // First we add a document in the DB with an authorized user (dac-admin).
             let response = await postRequest(dacAdmToken);
             expect(response.status).toBe(207);
-            // Then, we try to get that document with unauthorized users (user, dac-member).
+            // Then, we try to get that document with unauthorized users (user).
+            response = await getRequest(dacAdmToken_II);
+            expect(response.status).toBe(403);
+        });
+        it('User Authenticated AND Authorized - DAC-ADMIN & DAC-MEMBER (RBAC) controlling this resource (ABAC) -> 200', async () => {
+            // First we add a document in the DB with an authorized user (dac-admin).
+            let response = await postRequest(dacAdmToken);
+            expect(response.status).toBe(207);
+            // Then, we try to get that document with unauthorized users (user).
             response = await getRequest(usrToken);
             expect(response.status).toBe(403);
-            response = await getRequest(dacMbrToken);
-            expect(response.status).toBe(403);
-            // Finally, we get the document with a valid user (dac-admin role)
+            // Finally, we get the document with a valid user (dac-admin || dac-member role)
             response = await getRequest(dacAdmToken);
+            expect(response.status).toBe(200);
+            response = await getRequest(dacMbrToken);
             expect(response.status).toBe(200);
         });
     })
@@ -84,13 +98,35 @@ describe('Integration tests: AuthN/Z', () => {
             expect(response.status).toBe(403);
         });
 
-        it('User Authenticated AND Authorized (dac-admin -> is-dac)-> 207 (multistatus -> AuthN/Z it is OK)', async () => {
+        it('User Authenticated AND Authorized - DAC-ADMIN (RBAC) controlling this resource (ABAC) -> 207 (multistatus -> AuthN/Z it is OK)', async () => {
             const response = await postRequest(dacAdmToken);
             expect(response.status).toBe(207);
         });
-        it('User Authenticated AND Authorized (dac-member -> is-dac)-> 207 (multistatus -> AuthN/Z it is OK)', async () => {
+        it('User Authenticated AND Authorized - DAC-MEMBER (RBAC) controlling this resource (ABAC) -> 207 (multistatus -> AuthN/Z it is OK)', async () => {
             const response = await postRequest(dacMbrToken);
             expect(response.status).toBe(207);
+        });
+    })
+
+    describe('DELETE /permissions: Test protected endpoint with different user roles', () => {
+        it('User Authenticated AND NOT Authorized - DAC-MEMBER (RBAC) role controlling this resource (ABAC) NOT allowed to delete permissions  -> 403 error', async () => {
+            let response = await postRequest(dacAdmToken);
+            expect(response.status).toBe(207);
+            response = await deleteRequest(dacMbrToken);
+            expect(response.status).toBe(403);
+        });
+
+        it('User Authenticated AND NOT Authorized - DAC-ADMIN (RBAC) NOT controlling this resource (ABAC) NOT allowed to delete permissions -> 207 (multistatus -> AuthN/Z it is OK)', async () => {
+            let response = await postRequest(dacAdmToken);
+            expect(response.status).toBe(207);
+            response = await deleteRequest(dacAdmToken_II);
+            expect(response.status).toBe(403);
+        });
+        it('User Authenticated AND Authorized - DAC-ADMIN (RBAC) controlling this resource (ABAC) IS allowed to delete this permission -> 207 (multistatus -> AuthN/Z it is OK)', async () => {
+            let response = await postRequest(dacAdmToken);
+            expect(response.status).toBe(207);
+            response = await deleteRequest(dacAdmToken);
+            expect(response.status).toBe(200);
         });
     })
 });
