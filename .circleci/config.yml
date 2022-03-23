@@ -57,6 +57,11 @@ jobs:
             sudo usermod -a -G docker $USER
             sudo chmod -R 777 ./
       - run:
+          name: Start RabbitMQ
+          command: |
+            docker-compose -f docker-compose.tests.yml up -d rabbitmq
+            sleep 10
+      - run:
           name: Run Tests with Jest
           command: |
             docker-compose -f docker-compose.tests.yml run permissions-api npm test
