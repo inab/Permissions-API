@@ -63,6 +63,7 @@ export default async (req, res, next) => {
     if(!isValidUser) throw createError(404, "User account invalid")
 
     req.userId = userId;
+	req.userEmail = isValidUser.email;
 
 	next();
 }
