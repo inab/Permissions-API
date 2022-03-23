@@ -15,5 +15,5 @@ export default async (userId) => {
         realmName: 'IPC',
     });
 
-    return await await kcAdminClient.users.findOne({ id: userId })
+    return await kcAdminClient.users.findOne({ id: userId })
 }
