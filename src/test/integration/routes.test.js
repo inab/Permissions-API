@@ -8,40 +8,40 @@ describe('Integration tests: Routes with Admin role', () => {
 
     let baseUrl;
     let admToken;
-    let validId = "fa111014-1635-4708-b262-e8f6913d4bdb";
+    let validId = "b9716083-b4c9-48f3-aae1-db81190aae81";
     let invalidId = "invalidTestId";
 
     let assertionsDoc = [
         {
             type : "ControlledAccessGrants",
             asserted: 1564814387,
-            value: "https://test-url/TF001",
-            source: "https://test-url/source_dac_01",
+            value: "nc:172.21.0.1:7080:002",
+            source: "https://test-url/source_dac_02",
             by: "dac"
         },
         {
             type : "ControlledAccessGrants",
             asserted: 1564810000,
-            value: "https://test-url/TF002",
+            value: "nc:172.21.0.1:7080:003",
             source: "https://test-url/source_dac_02",
             by: "dac" 
         }
     ];
     
     let visaDoc = {
-        sub: "fa111014-1635-4708-b262-e8f6913d4bdb",
+        sub: "b9716083-b4c9-48f3-aae1-db81190aae81",
         assertions: [
             {
                 type : "ControlledAccessGrants",
                 asserted: 1564814387,
-                value: "https://test-url/TF001",
+                value: "nc:172.21.0.1:7080:002",
                 source: "https://test-url/source_dac_01",
                 by: "dac"
             },
             {
                 type : "ControlledAccessGrants",
                 asserted: 1564810000,
-                value: "https://test-url/TF002",
+                value: "nc:172.21.0.1:7080:003",
                 source: "https://test-url/source_dac_02",
                 by: "dac"
             }
@@ -157,7 +157,7 @@ describe('Integration tests: Routes with Admin role', () => {
         it('It should return 400 error if an invalid fileId is supplied: ', async () => {
             await UserPermissions.collection.insert(visaDoc)
  
-            const response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "invalidUri")
+            const response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, 123)
 
             expect(response.status).toBe(400);
         });
@@ -165,7 +165,7 @@ describe('Integration tests: Routes with Admin role', () => {
         it('It should return 204 error if the fileId is valid AND NOT assigned to the specified user: ', async () => {
             await UserPermissions.collection.insert(visaDoc)
  
-            const response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "https://test-url/TF003")
+            const response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "nc:172.21.0.1:7080:001")
             
             expect(response.status).toBe(204);
         });
@@ -173,7 +173,7 @@ describe('Integration tests: Routes with Admin role', () => {
         it('It should remove a single assertion', async () => {
             await UserPermissions.collection.insert(visaDoc)
 
-            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "https://test-url/TF001")
+            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "nc:172.21.0.1:7080:002")
             
             expect(response.status).toBe(200);
         });
@@ -181,7 +181,7 @@ describe('Integration tests: Routes with Admin role', () => {
         it('It should remove an assertion array as comma separated values', async () => {
             await UserPermissions.collection.insert(visaDoc)
 
-            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "https://test-url/TF001,https://test-url/TF002")
+            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "nc:172.21.0.1:7080:002,nc:172.21.0.1:7080:003")
 
             expect(response.status).toBe(200);
         });
@@ -189,7 +189,7 @@ describe('Integration tests: Routes with Admin role', () => {
         it('It should remove an assertion array as comma separated values when some valid AND NOT assigned fileIds are specified ', async () => {
             await UserPermissions.collection.insert(visaDoc)
 
-            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "https://test-url/TF001,https://test-url/TF0010,https://test-url/TF002,https://test-url/TF050")
+            let response = await queryBuilder(admToken, 3, 'PLAIN', validId, undefined, "nc:172.21.0.1:7080:002,nc:172.21.0.1:7080:003,nc:172.21.0.1:7080:001,nc:172.21.0.1:7080:004")
 
             expect(response.status).toBe(200);
         });

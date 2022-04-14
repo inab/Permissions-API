@@ -13,8 +13,8 @@ describe('Integration tests: AuthN/Z', () => {
     let baseUrl;
     let doc = [{ type : "ControlledAccessGrants",
                  asserted: 1564814387,
-                 value: "https://test-url/TF003",
-                 source: "https://test-url/source_dac_03",
+                 value: "nc:172.21.0.1:7080:001",
+                 source: "https://test-url/source_dac_01",
                  by: "dac" }];
 
     const postRequest = async (token) => {
@@ -32,7 +32,7 @@ describe('Integration tests: AuthN/Z', () => {
 
     const deleteRequest = async (token) => {
         return await request(app).delete('/permissions')
-                                 .query({ 'account-id': "42a55fa0-18e9-482b-8619-3d7caa757ac9", 'format' : 'PLAIN', 'values' : 'https://test-url/TF003' })
+                                 .query({ 'account-id': "42a55fa0-18e9-482b-8619-3d7caa757ac9", 'format' : 'PLAIN', 'values' : 'nc:172.21.0.1:7080:001' })
                                  .auth(token, { type: 'bearer' }) 
     }        
 
