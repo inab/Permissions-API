@@ -30,7 +30,7 @@ function validateBody(bodyObject){
             type: Joi.string().valid('ControlledAccessGrants').required(),
             asserted: Joi.number().required(),
             //value: Joi.string().uri({ scheme: ['https']}).required(),
-            value: Joi.string().regex(/(.*[:]){3}/i).required(),
+            value: Joi.string().regex(/(.*[:]){2}/i).required(),
             source: Joi.string().uri({ scheme: ['https']}).required(),
             by: Joi.string().valid('dac').required()
         })
@@ -55,7 +55,7 @@ function validateQueryAndFileIds(queryObject){
         paramsId: Joi.string().when('headerId', { is: null, then: Joi.required() }),
         paramsFileIds:  Joi.alternatives().try(
                             //JoiExtended.delimitedArray().items(Joi.string().uri({ scheme: ['https']}).required()),
-                            JoiExtended.delimitedArray().items(Joi.string().regex(/(.*[:]){3}/i).required()),
+                            JoiExtended.delimitedArray().items(Joi.string().regex(/(.*[:]){2}/i).required()),
                             Joi.string().valid('all')
         ).required()
     })
