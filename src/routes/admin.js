@@ -25,7 +25,7 @@ export default ({ keycloak }) => {
 		
 		const message = buildMessage("permissions-api", req.userId, req.userEmail, "POST", datasetIds);
 
-		await sendMessage(JSON.stringify(message));
+		await sendMessage(JSON.stringify(message), process.env.RABBITMQ_QUEUE_DATA);
 
 		res.status(207);
 		res.send(response);
@@ -43,7 +43,7 @@ export default ({ keycloak }) => {
 
 		const message = buildMessage("permissions-api", req.userId, req.userEmail, "DELETE", datasetIds)
 
-		await sendMessage(JSON.stringify(message));
+		await sendMessage(JSON.stringify(message), process.env.RABBITMQ_QUEUE_DATA);
 	
 		res.status(200);
 		res.send(lastItem);
