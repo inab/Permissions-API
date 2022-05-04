@@ -36,6 +36,8 @@ jobs:
       - run:
           name: Start MONGO
           command: |
+            sudo chmod 400 keyfile
+            sudo chown 999:999 keyfile
             docker-compose -f docker-compose.tests.yml up -d mongo
       - run:
           name: Wait for mongodb
@@ -64,6 +66,7 @@ jobs:
       - run:
           name: Run Tests with Jest
           command: |
+            sudo chmod -R 777 ./
             docker-compose -f docker-compose.tests.yml run permissions-api npm test
   publish:
     docker:
