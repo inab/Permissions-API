@@ -84,7 +84,7 @@ var serverConf = {
     "corsHeaders": ["Link"]
 };
 
-module.exports = {
+export {
     keycloak,
     sessionData,
     keycloakAdminCredentials,

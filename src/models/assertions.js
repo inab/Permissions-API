@@ -25,4 +25,4 @@ const assertionsSchema = new mongoose.Schema({
     }
 });
 
-exports.assertionsSchema = assertionsSchema;
+export { assertionsSchema }

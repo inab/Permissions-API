@@ -22,5 +22,4 @@ const requestSchema = new mongoose.Schema({
 
 const UserRequests = mongoose.model('userRequests', requestSchema);
 
-
-exports.UserRequests = UserRequests;
+export { UserRequests }

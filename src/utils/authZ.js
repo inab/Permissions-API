@@ -17,7 +17,4 @@ const allowedResources = (assertions, mask) => {
     return assertions.filter((item, i) => mask[i]);
 }
 
-exports.getAuthZ = getAuthZ;
-exports.getResourcesMask = getResourcesMask;
-exports.checkRole = checkRole;
-exports.allowedResources = allowedResources;
+export { getAuthZ, getResourcesMask, checkRole, allowedResources }

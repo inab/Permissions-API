@@ -63,7 +63,4 @@ function validateQueryAndFileIds(queryObject){
     return schema.validate(queryObject);
 }
 
-exports.UserPermissions = UserPermissions;
-exports.validateQuery = validateQuery;
-exports.validateBody = validateBody;
-exports.validateQueryAndFileIds = validateQueryAndFileIds;
+export { UserPermissions, validateQuery, validateQueryAndFileIds, validateBody }

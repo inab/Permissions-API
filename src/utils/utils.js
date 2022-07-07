@@ -117,10 +117,12 @@ const getRequest = async (id) => {
     return response
 }
 
-exports.getFilePermissions = getFilePermissions;
-exports.createFilePermissions = createFilePermissions;
-exports.removeFilePermissions = removeFilePermissions;
-exports.generateVisaPayload = generateVisaPayload;
-exports.signVisa = signVisa;
-exports.getKeyStore = getKeyStore;
-exports.getRequest = getRequest;
+export { 
+    getFilePermissions, 
+    getRequest, 
+    getKeyStore, 
+    createFilePermissions, 
+    removeFilePermissions, 
+    generateVisaPayload, 
+    signVisa 
+}
