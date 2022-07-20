@@ -117,7 +117,7 @@ describe('Integration tests: Routes with Admin role', () => {
 
             expect(response.status).toBe(200);
             expect(response.body).toHaveLength(2);
-            expect(response.body.map(JSON.parse)).toEqual(
+            expect(response.body).toEqual(
                 expect.arrayContaining([
                   expect.objectContaining({ "sub": validId })
                 ])
@@ -136,17 +136,14 @@ describe('Integration tests: Routes with Admin role', () => {
             await UserPermissions.collection.insert(visaDoc)
             
             let response = await queryBuilder(admToken, 1, undefined, validId)
-
             expect(response.body).toHaveLength(2);       
             expect(response.status).toBe(200); 
 
             response = await queryBuilder(admToken, 1, 'JWT', validId)
-
             expect(response.body).toHaveLength(2);
             expect(response.status).toBe(200);
 
             response = await queryBuilder(admToken, 1, 'PLAIN', validId)
-            
             expect(response.body).toHaveLength(2);
             expect(response.status).toBe(200);
         });

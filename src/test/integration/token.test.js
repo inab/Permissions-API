@@ -34,10 +34,10 @@ describe('Integration tests: Tokens', () => {
     describe('JWT generation tests', () => {
         it('Check if JWT is generated properly -> Verify with the JWKS endpoint', async () => {
             
-            const payload = JSON.stringify({
+            const payload = {
                 username: "testuser",
                 email: "testuser11235@liamg.moc(k)"
-            })
+            }
             const keyStore = await getKeyStore()
             const [key] = keyStore.all({ use: 'sig' })
             const options = { compact: true, jwk: key, fields: { typ: 'jwt', 
@@ -45,7 +45,7 @@ describe('Integration tests: Tokens', () => {
                                                                  jku: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/jwks',
                                                                  kid: key.kid } }
                 
-            let token = await jose.JWS.createSign(options, key).update(payload).final()
+            let token = await jose.JWS.createSign(options, key).update(JSON.stringify(payload)).final()
 
             const response = await request(app).get('/jwks')
 

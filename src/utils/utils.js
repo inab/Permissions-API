@@ -56,27 +56,24 @@ const removeFilePermissions = async (userId, fileId) => {
 // 2.a. GENERATE VISA PAYLOAD. 
 
 const generateVisaPayload = (id, allowed, format) => {
-    // Parse DB response
-    const parsed = JSON.parse(JSON.stringify(allowed))[0].assertions
-    // Build the payload
-    
-    // Dmitry: JSON-Object visas response instead of strings...
-    // let payload = parsed.map(item => JSON.parse(JSON.stringify({
-    
-    let payload = parsed.map(item => JSON.stringify({
-        iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
-        sub: id,
-        ga4gh_visa_v1: {
-            type : item.type,
-            value: item.value,
-            source: item.source,
-            by: item.by,
-            asserted: item.asserted
-        },
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor((Date.now() + 3600000) / 1000),
-        format: format
-    }))
+    let assertions = allowed[0].assertions;
+    let payload = assertions.map(item => {
+        let claims = {
+            iss: 'https://dev-catalogue.ipc-project.bsc.es/permissions/api/',
+            sub: id,
+            ga4gh_visa_v1: {
+                type : item.type,
+                value: item.value,
+                source: item.source,
+                by: item.by,
+                asserted: item.asserted
+            },
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor((Date.now() + 3600000) / 1000),
+            format: format
+        }
+        return claims
+    })
 
     return payload
 }
@@ -96,8 +93,7 @@ const signVisa = async (payload) => {
 
     // C. Generate signed JWT (visas)
     let token = await Promise.all(payload.map(async (item) =>   jose.JWS.createSign(options, key)
-                                                                        //.update(JSON.stringify(item))
-                                                                        .update(item)
+                                                                        .update(JSON.stringify(item))
                                                                         .final() ))
     return token
 }
@@ -117,12 +113,10 @@ const getRequest = async (id) => {
     return response
 }
 
-export { 
-    getFilePermissions, 
-    getRequest, 
-    getKeyStore, 
-    createFilePermissions, 
-    removeFilePermissions, 
-    generateVisaPayload, 
-    signVisa 
-}
+exports.getFilePermissions = getFilePermissions;
+exports.createFilePermissions = createFilePermissions;
+exports.removeFilePermissions = removeFilePermissions;
+exports.generateVisaPayload = generateVisaPayload;
+exports.signVisa = signVisa;
+exports.getKeyStore = getKeyStore;
+exports.getRequest = getRequest;
